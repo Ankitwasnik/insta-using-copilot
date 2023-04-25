@@ -6,11 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 // entity for user of a social media app
 @Entity(name = "User")
@@ -19,6 +20,8 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity {
 
   //Name of the user
@@ -30,7 +33,7 @@ public class User extends BaseEntity {
   private String email;
 
   //Password of the user
-  @Column(name = "password", nullable = false, length = 64)
+  @Column(name = "password", nullable = false, length = 1000)
   private String password;
 
   //Bio of the user
@@ -39,11 +42,11 @@ public class User extends BaseEntity {
 
   // Is user active
   @Column(name = "is_active", nullable = false)
-  private Boolean isActive;
+  private boolean isActive;
 
   // Is user verified
   @Column(name = "is_verified", nullable = false)
-  private Boolean isVerified;
+  private boolean isVerified;
 
   // verified at time
   @Column(name = "verified_at")

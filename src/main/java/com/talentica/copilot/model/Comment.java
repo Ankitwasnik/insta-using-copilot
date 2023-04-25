@@ -9,9 +9,11 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -23,6 +25,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment extends BaseEntity {
 
   // id of the post on which comment is made

@@ -53,5 +53,8 @@ public class PostController {
     return ResponseEntity.ok(posts);
   }
 
+  // add reaction to a post
+
+
 
 }

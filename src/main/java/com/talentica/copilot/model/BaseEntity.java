@@ -1,6 +1,7 @@
 package com.talentica.copilot.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -10,11 +11,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 // base entity for all entities
 @Getter
 @Setter
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
   // id of the entity
@@ -35,7 +38,7 @@ public abstract class BaseEntity {
 
   // flag to store if entity is deleted
   @Column(name = "deleted", nullable = false)
-  private Boolean deleted;
+  private boolean deleted;
 
   // time when entity was deleted
   @Column(name = "deleted_time")

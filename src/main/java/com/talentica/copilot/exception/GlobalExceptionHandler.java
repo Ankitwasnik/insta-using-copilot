@@ -22,9 +22,9 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResource);
   }
 
-  @ExceptionHandler(BaseException.class)
-  public ResponseEntity<ErrorResource> handleBaseException(BaseException ex) {
-    ErrorResource errorResource = new ErrorResource(ex.getMessage());
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResource> handleBaseException(Exception ex) {
+    ErrorResource errorResource = new ErrorResource("Internal Error Occurred");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResource);
   }
 }

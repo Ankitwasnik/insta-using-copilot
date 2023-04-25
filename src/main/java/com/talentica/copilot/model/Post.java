@@ -11,9 +11,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,6 +27,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post extends BaseEntity {
 
   //user who created the post

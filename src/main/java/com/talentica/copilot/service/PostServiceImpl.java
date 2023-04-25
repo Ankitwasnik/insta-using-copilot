@@ -2,10 +2,12 @@ package com.talentica.copilot.service;
 
 import com.talentica.copilot.dto.CreatePostRequest;
 import com.talentica.copilot.dto.PostDto;
-import com.talentica.copilot.enums.ReactionType;
 import com.talentica.copilot.exception.ResourceNotFoundException;
 import com.talentica.copilot.model.Post;
+import com.talentica.copilot.model.User;
 import com.talentica.copilot.repository.PostRepository;
+import com.talentica.copilot.repository.UserRepository;
+import com.talentica.copilot.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,14 +20,15 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService {
 
   private final PostRepository postRepository;
+  private final UserService userService;
 
   @Override
   // Create a new post
   public PostDto createPost(CreatePostRequest request) {
-    log.info("Creating a new post");
+    log.info("Creating a new post for user: {}", SecurityUtil.getUserId());
     log.debug("Request: {}", request);
 
-    Post post = mapToEntity(request);
+    Post post = mapToEntity(request, userService.getLoggedInUser());
     Post savedPost = postRepository.save(post);
     return mapToDto(savedPost);
   }
@@ -43,7 +46,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public Page<PostDto> getAllPosts(int page, int size) {
     log.info("Getting all posts");
-    Page<Post> posts = postRepository.findAll(PageRequest.of(page, size));
+    Page<Post> posts = postRepository.findAllByUserId(SecurityUtil.getUserId(), PageRequest.of(page, size));
     return posts.map(this::mapToDto);
   }
 
@@ -55,8 +58,9 @@ public class PostServiceImpl implements PostService {
         .build();
   }
 
-  private Post mapToEntity(CreatePostRequest request) {
+  private Post mapToEntity(CreatePostRequest request, User user) {
     return Post.builder()
+        .user(user)
         .caption(request.getCaption())
         .mediaUrl(request.getMediaUrl())
         .build();
