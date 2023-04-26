@@ -2,12 +2,19 @@ package com.talentica.copilot.service;
 
 import com.talentica.copilot.dto.CreatePostRequest;
 import com.talentica.copilot.dto.PostDto;
+import com.talentica.copilot.dto.PostTrendDto;
+import com.talentica.copilot.enums.Interval;
 import com.talentica.copilot.exception.ResourceNotFoundException;
 import com.talentica.copilot.model.Post;
 import com.talentica.copilot.model.User;
 import com.talentica.copilot.repository.PostRepository;
-import com.talentica.copilot.repository.UserRepository;
 import com.talentica.copilot.util.SecurityUtil;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,6 +55,28 @@ public class PostServiceImpl implements PostService {
     log.info("Getting all posts");
     Page<Post> posts = postRepository.findAllByUserId(SecurityUtil.getUserId(), PageRequest.of(page, size));
     return posts.map(this::mapToDto);
+  }
+
+  @Override
+  // aggregate the number of posts for each interval and map to PostTrendDto
+  public List<PostTrendDto> getPostsTrend(Interval interval, Instant from, Instant to) {
+    log.info("Getting posts trend");
+    String intervalString = interval.toString().toLowerCase();
+    LocalDateTime fromDateTime = LocalDateTime.ofInstant(from, ZoneId.of("UTC"));
+    LocalDateTime toDateTime = LocalDateTime.ofInstant(to, ZoneId.of("UTC"));
+    List<Object[]> posts = postRepository.getPostsTrend(intervalString, fromDateTime, toDateTime);
+    return mapToPostTrendDto(posts);
+  }
+
+  private List<PostTrendDto> mapToPostTrendDto(List<Object[]> posts) {
+    return posts.stream()
+        .map(post -> {
+          PostTrendDto dto = new PostTrendDto();
+          dto.setTime(((Timestamp) post[0]).toInstant());
+          dto.setCount((Long) post[1]);
+          return dto;
+        })
+        .toList();
   }
 
   private PostDto mapToDto(Post post) {

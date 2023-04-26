@@ -2,13 +2,13 @@ package com.talentica.copilot.controller;
 
 import com.talentica.copilot.dto.CreatePostRequest;
 import com.talentica.copilot.dto.PostDto;
-import com.talentica.copilot.enums.ReactionType;
-import com.talentica.copilot.model.Post;
+import com.talentica.copilot.dto.PostTrendDto;
+import com.talentica.copilot.enums.Interval;
 import com.talentica.copilot.service.PostService;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +53,12 @@ public class PostController {
     return ResponseEntity.ok(posts);
   }
 
-  // add reaction to a post
+  // Get trend of posts created over time
+  @GetMapping("/trend")
+  public ResponseEntity<List<PostTrendDto>> getPostsTrend(@RequestParam Interval interval, @RequestParam Instant from, @RequestParam Instant to) {
+    List<PostTrendDto> postTrend = postService.getPostsTrend(interval, from, to);
+    return ResponseEntity.ok(postTrend);
+  }
 
 
 
