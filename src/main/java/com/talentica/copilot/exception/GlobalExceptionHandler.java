@@ -18,6 +18,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResource);
   }
 
+  @ExceptionHandler(ResourceAlreadyExistsException.class)
+  public ResponseEntity<ErrorResource> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
+    ErrorResource errorResource = new ErrorResource(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResource);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResource> handleException(Exception ex) {
     log.error("Internal Error Occurred", ex);
