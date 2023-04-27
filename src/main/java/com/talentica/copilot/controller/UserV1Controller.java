@@ -49,4 +49,9 @@ public class UserV1Controller {
     return ResponseEntity.created(location).body(userDto);
   }
 
+  // API to get user ratings
+  @GetMapping("/{id}/ratings")
+  public ResponseEntity<Long> getUserRatings(@PathVariable Long id) {
+    return ResponseEntity.ok(userService.getUserRatings(id));
+  }
 }

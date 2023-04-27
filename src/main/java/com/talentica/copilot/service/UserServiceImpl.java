@@ -5,13 +5,16 @@ import com.talentica.copilot.dto.ExtendedUserDetails;
 import com.talentica.copilot.dto.UserDto;
 import com.talentica.copilot.exception.ResourceAlreadyExistsException;
 import com.talentica.copilot.exception.ResourceNotFoundException;
+import com.talentica.copilot.model.Post;
 import com.talentica.copilot.model.User;
+import com.talentica.copilot.repository.CommentRepository;
+import com.talentica.copilot.repository.PostRepository;
+import com.talentica.copilot.repository.ReactionRepository;
 import com.talentica.copilot.repository.UserRepository;
 import com.talentica.copilot.util.DateTimeUtil;
 import com.talentica.copilot.util.SecurityUtil;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final PostRepository postRepository;
+  private final CommentRepository commentRepository;
+  private final ReactionRepository reactionRepository;
 
   @Override
   public UserDto getUserById(Long id) {
@@ -83,6 +89,29 @@ public class UserServiceImpl implements UserService {
       log.error("User not found with id: {}", userId);
       return new ResourceNotFoundException("User not found");
     });
+  }
+
+  // Logic to get user ratings is as follows:
+  // 1. If a user submits a post, the user will get 10 points.
+  // 2. If there are reactions to the post, the user who submitted the post will get an additional 1 point for each reaction.
+  // 3. If there are comments on the post, the user who submitted the post will get an additional 2 point for each comment by other users.
+  @Override
+  public Long getUserRatings(Long id) {
+    log.info("Getting user ratings for user with id: {}", id);
+    userRepository.findById(id).orElseThrow(() -> {
+      log.error("User not found with id: {}", id);
+      return new ResourceNotFoundException("User not found");
+    });
+
+    Long ratings = 0L;
+    List<Post> postIds = postRepository.findAllByUserId(id);
+    for (Post post : postIds) {
+      Long postId = post.getId();
+      ratings += 10L;
+      ratings += reactionRepository.countByPostId(postId);
+      ratings += commentRepository.countByPostIdAndUserIdNot(postId, id) * 2L;
+    }
+    return ratings;
   }
 
 

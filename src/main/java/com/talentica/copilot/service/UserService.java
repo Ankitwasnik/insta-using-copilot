@@ -12,4 +12,6 @@ public interface UserService extends UserDetailsService {
   UserDto createUser(CreateUserRequest request);
 
   User getLoggedInUser();
+
+  Long getUserRatings(Long id);
 }

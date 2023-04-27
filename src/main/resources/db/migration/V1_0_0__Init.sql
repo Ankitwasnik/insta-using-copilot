@@ -2,7 +2,7 @@
 -- Init all the tables schema
 CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
-    name VARCHAR (50) UNIQUE NOT NULL,
+    name VARCHAR (50) NOT NULL,
     password VARCHAR (1000) NOT NULL,
     email VARCHAR (355) UNIQUE NOT NULL,
     created_time TIMESTAMP NOT NULL,
